@@ -3,9 +3,9 @@
 MeMegaPiDCMotor motor1 (port2B);
 MeMegaPiDCMotor motor2 (port1B);
 
-string motorSpeed;
-string motorSpeedText1;
-string motorSpeedText2;
+String motorSpeed;
+String motorSpeedText1;
+String motorSpeedText2;
 int motorSpeed1;
 int motorSpeed2;
 int index;
