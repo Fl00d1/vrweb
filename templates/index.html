@@ -1,0 +1,189 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+          
+    <script src="{{url_for('static', filename='aframe.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+       var ws = io();
+       ws.on('connect',function(){
+        setInterval(()=>{ 
+          console.log("OK");
+          ws.emit('test', {x: x,y:y});
+        },10);
+       });
+
+       ws.on('disconnect', function(){
+        console.log("disconnected")
+       })
+       ws.on('error', function(err){ 
+
+        console.log(err);
+
+});
+    </script>
+<!-- <script>
+    function socketsending(){
+
+          console.log("OK");
+          ws.emit('test', {data: 'I\'m connected!'});
+        }
+
+</script> -->
+    <script>
+                AFRAME.registerComponent('box', {
+            schema: {
+                width: { type: 'number', default: 1 },
+                height: { type: 'number', default: 1 },
+                depth: { type: 'number', default: 1 },
+                color: { type: 'color', default: '#AAA' }
+            },
+
+            init: function () {
+
+                var data = this.data;
+                var el = this.el;
+
+                this.loader = new THREE.TextureLoader();
+
+                this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
+                this.material = new THREE.MeshPhongMaterial({
+                    map: this.getImage()
+                });
+                this.material.needsUpdate = true;
+                this.mesh = new THREE.Mesh(this.geometry, this.material);
+                el.setObject3D('mesh', this.mesh);
+            },
+
+            tick: function (time, timeDelta) {
+                this.mesh.material.map.img = this.getImage();
+                this.mesh.material.map.needsUpdate = true;
+
+                
+
+            },
+
+            getImage: function() {
+                
+                //ws.emit('video_feed')
+                // image = "{{url_for('static', filename='dog.jpeg')}}";
+                return  this.loader.load("{{ url_for('video_feed') }}");
+                // return this.loader.load(image);
+            }
+        });
+    </script>
+    
+    <script>
+        // while (True){
+        //     log.v('log',document.querySelector('[oculus-touch-controls="hand: right"]').getAttribute('position'))
+        // }
+
+
+    </script>
+    <title>Live Streaming Demonstration</title>
+</head>
+<body>
+    <a-scene>
+
+        <a-assets>
+
+        </a-assets>
+        <a-entity box="width: 30; height: 25; depth: 0;"
+        position="0 0 -10"></a-entity>
+        <a-text id="leftx"value="1234" position="-4 2 -2" ></a-text>
+        <a-text id="lefty"value="1234" position="-4 1.6 -2" ></a-text>
+        <a-text id="leftz"value="1234" position="-4 1.2 -2" ></a-text>
+        <a-text id="rightx"value="1234" position="4 2 -2" ></a-text>
+        <a-text id="righty"value="1234" position="4 1.6 -2" ></a-text>
+        <a-text id="rightz"value="1234" position="4 1.2 -2" ></a-text>
+        <a-entity oculus-touch-controls="hand: left" ></a-entity>
+        <a-entity  oculus-touch-controls="hand: right" thumbstick-logging></a-entity>
+    </a-scene>
+    <script>
+        setInterval(()=>{
+            xl=document.querySelector('[oculus-touch-controls="hand: left"]').getAttribute('position')["x"]
+            yl=document.querySelector('[oculus-touch-controls="hand: left"]').getAttribute('position')["y"]
+            zl=document.querySelector('[oculus-touch-controls="hand: left"]').getAttribute('position')["z"]
+            document.getElementById("leftx").setAttribute('value',Math.round(xl*1000)/1000)
+            document.getElementById("lefty").setAttribute('value',Math.round(yl*1000)/1000)
+            document.getElementById("leftz").setAttribute('value',Math.round(zl*1000)/1000)
+
+            xr=document.querySelector('[oculus-touch-controls="hand: right"]').getAttribute('position')["x"]
+            yr=document.querySelector('[oculus-touch-controls="hand: right"]').getAttribute('position')["y"]
+            zr=document.querySelector('[oculus-touch-controls="hand: right"]').getAttribute('position')["z"]
+            document.getElementById("rightx").setAttribute('value',Math.round(xr*1000)/1000)
+            document.getElementById("righty").setAttribute('value',Math.round(yr*1000)/1000)
+            document.getElementById("rightz").setAttribute('value',Math.round(zr*1000)/1000)
+        },100);
+    </script>
+    <script>
+
+    </script>
+    <script>
+                    // var controller=document.querySelector('[oculus-touch-controls="hand: right"]')
+            var thumbstick = {
+        x:0,
+        y:0
+        }
+        // controller.addEventListener('thumbstickmoved', function(evt){
+        //          thumbstick.x=evt.detail.x;     thumbstick.y=evt.detail.y; })
+    </script>
+    <script>
+        var ready=true;
+        var x,y;
+        x=0;
+        y=0;
+        AFRAME.registerComponent('thumbstick-logging',{
+            init: function(){
+                this.el.addEventListener('thumbstickmoved', this.logThumbstick);
+            },  
+            logThumbstick: function(evt){
+                x=evt.detail.x;
+                y=evt.detail.y;
+                
+            }
+        });
+
+    </script> 
+        
+
+    <script>
+        // setInterval(()=>{
+        //     if (ready==true){
+        //     post(x,y);
+        //     console.log("posted");
+        //     ready=false;
+        //     }
+        // },150);
+    </script>
+    <!-- <script>
+        function post(x,y){
+        fetch("http://localhost:5000/button_pressed", {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: 
+        JSON.stringify({"x":x,"y":y})
+    }).then(function(response){
+            ready=true;
+            console.log("got")
+    }); 
+        }
+
+            </script> -->
+    <script>
+        // document.getElementById("vid").src="{{ url_for('video_feed') }}";
+    </script>
+</body>
+</html>
